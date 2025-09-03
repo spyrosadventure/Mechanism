@@ -24,7 +24,7 @@ protected:
 
         if (ImGui::BeginTable("ChunkProperties", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp)) {
             ImGui::TableNextRow();
-            
+
             ImGui::TableNextRow();
             ImGui::TableNextColumn(); ImGui::TextUnformatted("Type");
             ImGui::TableNextColumn(); ImGui::TextUnformatted(ChunkTypeToString(selectedChunk->type));

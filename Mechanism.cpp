@@ -47,7 +47,6 @@ int main() {
     // Literally all of my ImGui code is all over the place, gonna fix this eventually
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui::LoadIniSettingsFromDisk(configPath.string().c_str());
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.Fonts->AddFontDefault();
@@ -121,6 +120,8 @@ int main() {
                         openedFiles.push_back({ folderPath, fileName, {}, {} });
                         OpenedFile& of = openedFiles.back();
                         of.chunkPanel.chunks = package.chunks;
+                        of.chunkPanel.is64Bit = package.is64bit;
+                        of.chunkPanel.game = int(currentGame);
 
                         if (!of.chunkPanel.chunks.empty()) { // this caused so many errors before i added this check!
                             of.chunkPanel.selectedChunk = &of.chunkPanel.chunks[0];
@@ -135,7 +136,9 @@ int main() {
 
             for (size_t i = 0; i < openedFiles.size(); ++i) {
                 OpenedFile& of = openedFiles[i];
-                if (ImGui::BeginTabItem(of.name.c_str())) {
+
+                bool open = true;
+                if (ImGui::BeginTabItem(of.name.c_str(), &open)) {
                     ImGui::BeginChild(("FileChild" + std::to_string(i)).c_str(), ImGui::GetContentRegionAvail(), false);
 
                     ImGui::DockSpace(ImGui::GetID(("DockSpace" + std::to_string(i)).c_str()));
@@ -145,6 +148,11 @@ int main() {
 
                     ImGui::EndChild();
                     ImGui::EndTabItem();
+                }
+
+                if (!open)
+                {
+                    openedFiles.erase(openedFiles.begin() + i);
                 }
             }
             ImGui::EndTabBar();
@@ -161,7 +169,6 @@ int main() {
         glfwSwapBuffers(window);
     }
 
-    ImGui::SaveIniSettingsToDisk(configPath.string().c_str());
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
