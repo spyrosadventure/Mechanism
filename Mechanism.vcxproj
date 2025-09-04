@@ -157,6 +157,7 @@
     <ClCompile Include="Panels\ViewerPanel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="1st_party\Cogwheel\RZResource.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ImGuiStyles.h" />
     <ClInclude Include="Panels\ChunkPanel.h" />
