@@ -1163,6 +1163,48 @@ inline const char* ChunkTypeToString(CMChunkType typeValue) {
     return fallback.c_str();
 }
 
+enum ConsoleType {
+    ConsoleUnknown = 0,
+    ConsoleWindows = 0x1,
+    ConsoleXBox360 = 0x2,
+    ConsolePS3 = 0x3,
+    ConsoleWii = 0x4,
+    ConsoleMac = 0x5,
+    ConsoleVitaSW = 0x6,
+    ConsoleVitaHW = 0x7,
+    ConsolePS4 = 0x8,
+    ConsoleiOS = 0x9,
+    Console3DS = 0xa,
+    ConsoleWiiUSW = 0xb,
+    ConsoleWiiUHW = 0xc,
+    ConsoleAndroid = 0xd,
+    ConsoleXboxOne = 0xe,
+    ConsoleLinux = 0xf,
+    ConsoleWindowsPhone = 0x10,
+};
+
+inline std::string ConsoleTypeToString(ConsoleType type) {
+    switch (type) {
+    case ConsoleUnknown:      return "Unknown Platform";
+    case ConsoleWindows:      return "Microsoft Windows";
+    case ConsoleXBox360:      return "Microsoft Xbox 360";
+    case ConsolePS3:          return "Sony PlayStation 3";
+    case ConsoleWii:          return "Nintendo Wii";
+    case ConsoleMac:          return "Apple macOS";
+    case ConsoleVitaSW:       return "PlayStation Vita (Software Emulator)";
+    case ConsoleVitaHW:       return "PlayStation Vita (Hardware)";
+    case ConsolePS4:          return "Sony PlayStation 4";
+    case ConsoleiOS:          return "Apple iOS";
+    case Console3DS:          return "Nintendo 3DS";
+    case ConsoleWiiUSW:       return "Nintendo Wii U (Software Emulator)";
+    case ConsoleWiiUHW:       return "Nintendo Wii U (Hardware)";
+    case ConsoleAndroid:      return "Google Android";
+    case ConsoleXboxOne:      return "Microsoft Xbox One";
+    case ConsoleLinux:        return "Linux";
+    case ConsoleWindowsPhone: return "Microsoft Windows Phone";
+    default:                  return "Invalid ConsoleType";
+    }
+}
 
 class LDChunk {
 public:
@@ -1171,6 +1213,7 @@ public:
     bool hasChildren = false;
     uint32_t length = 0;
     uint64_t offset = 0;
+    ConsoleType platform = ConsoleUnknown;
 
     std::vector<uint8_t> data;
     std::vector<LDChunk> children;
@@ -1183,6 +1226,17 @@ public:
 
     void AddChild(const LDChunk& child) {
         children.push_back(child);
+    }
+
+    const std::vector<LDChunk>& FindChildOfType(CMChunkType childType)
+    {
+        std::vector<LDChunk> matches;
+        for (const auto& child : children) {
+            if (child.type == childType) {
+                matches.push_back(child);
+            }
+        }
+        return matches;
     }
 
     const std::vector<LDChunk>& GetChildren() const {

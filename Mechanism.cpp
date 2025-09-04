@@ -107,6 +107,27 @@ int main() {
                     }
                     ImGui::EndCombo();
                 }
+                static ConsoleType currentPlatform = ConsoleType::ConsoleUnknown;
+                if (ImGui::BeginCombo("Select Platform", ConsoleTypeToString(currentPlatform).c_str())) {
+                    for (int i = 0; i <= (int)ConsoleType::ConsoleWindowsPhone; i++) {
+                        ConsoleType platform = static_cast<ConsoleType>(i);
+                        bool isSelected = (currentPlatform == platform);
+                        if (ImGui::Selectable(ConsoleTypeToString(platform).c_str(), isSelected))
+                            currentPlatform = platform;
+                        if (isSelected) ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+
+                if (!(currentPlatform == ConsoleWindows ||
+                    currentPlatform == ConsoleUnknown ||
+                    currentPlatform == ConsoleXBox360 ||
+                    currentPlatform == ConsolePS3 ||
+                    currentPlatform == ConsoleWii ||
+                    currentPlatform == ConsoleWiiUSW ||
+                    currentPlatform == ConsoleWiiUHW)) {
+                    throw std::runtime_error("Invalid platform selected! Please select Windows, X360, PS3, Wii or Wii U!");
+                }
 
                 ImGui::Spacing();
                 if (ImGui::Button("Open File")) {
@@ -114,6 +135,8 @@ int main() {
                     PKPackageMgr package;
                     package.is64bit = Check64BitGame(currentGame); // This is the only good part of GoliathGame, makes stuff much simpler for me.
                     package.isBigEndian = true; // lmao wtf?? this gets overwritten i think
+                    package.lastOpenedGame = currentGame;
+                    package.lastOpenedPlatform = currentPlatform;
 
                     if (package.ReadFile(fullPath)) {
                         SaveLastOpenedPath(fullPath);

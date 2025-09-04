@@ -45,6 +45,10 @@ protected:
             ImGui::TableNextColumn(); ImGui::TextUnformatted("Offset");
             ImGui::TableNextColumn(); ImGui::Text("%zu", selectedChunk->offset);
 
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn(); ImGui::TextUnformatted("Platform");
+            ImGui::TableNextColumn(); ImGui::TextUnformatted(ConsoleTypeToString(selectedChunk->platform).c_str());
+
             ImGui::EndTable();
         }
 

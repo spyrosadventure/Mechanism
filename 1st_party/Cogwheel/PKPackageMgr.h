@@ -111,6 +111,7 @@ public:
     bool is64bit = false;
     bool isBigEndian = false;
     GoliathGame lastOpenedGame;
+    ConsoleType lastOpenedPlatform;
 
     int chunkSize = 16;
 
@@ -192,6 +193,7 @@ private:
             }
             uint32_t length = ReadUInt32(file, isBigEndian);
             LDChunk chunk(MaskChunkType(rawType), version, hasChildren != 0, length, offset);
+            chunk.platform = lastOpenedPlatform;
 
             std::cerr << std::string(depth * 2, ' ')
                 << "Chunk at offset " << offset
