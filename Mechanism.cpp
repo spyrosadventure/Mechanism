@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
-#include <PKPackageMgr.h>
+#include <Package/PKPackageMgr.h>
 #include "Panels/ChunkPanel.h"
 #include "Panels/ViewerPanel.h"
 #include "Config.h"
@@ -49,6 +49,9 @@ int main() {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    std::filesystem::path imguiIniPath = GetAppDataPath() / "imgui.ini";
+    static std::string imguiIniString = imguiIniPath.string(); // static or member variable
+    io.IniFilename = imguiIniString.c_str();
     io.Fonts->AddFontDefault();
     io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/seguiemj.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesDefault());
     ImGui::StyleColorsDark();
@@ -68,6 +71,8 @@ int main() {
         strcpy_s(folderPath, sizeof(folderPath), p.parent_path().string().c_str()); // strcpy_s cause compiler doesnt like strcpy
         strcpy_s(fileName, sizeof(fileName), p.filename().string().c_str());
     }
+
+    ImGui::LoadIniSettingsFromDisk(io.IniFilename);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -145,6 +150,7 @@ int main() {
                         of.chunkPanel.chunks = package.chunks;
                         of.chunkPanel.is64Bit = package.is64bit;
                         of.chunkPanel.game = int(currentGame);
+                        package.SaveFile("test.pak");
 
                         if (!of.chunkPanel.chunks.empty()) { // this caused so many errors before i added this check!
                             of.chunkPanel.selectedChunk = &of.chunkPanel.chunks[0];

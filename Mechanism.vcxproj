@@ -153,15 +153,12 @@
     <ClCompile Include="3rd_party\imgui\imgui_widgets.cpp" />
     <ClCompile Include="ImGuiStyles.cpp" />
     <ClCompile Include="Mechanism.cpp" />
-    <ClCompile Include="1st_party\Cogwheel\PKPackageMgr.h" />
     <ClCompile Include="Panels\ViewerPanel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="1st_party\Cogwheel\RZResource.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ImGuiStyles.h" />
     <ClInclude Include="Panels\ChunkPanel.h" />
-    <ClInclude Include="1st_party\Cogwheel\LDChunk.h" />
     <ClInclude Include="Panels\Panel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdint>
-#include "LDChunk.h"
+#include "Loading/LDChunk.h"
 
 inline uint16_t Swap16(uint16_t val) {
     return (val << 8) | (val >> 8);
@@ -167,7 +167,99 @@ public:
         return true;
     }
 
+    bool SaveFile(const std::string& filename)
+    {
+        std::ofstream file(filename, std::ios::binary);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file for writing: " << filename << std::endl;
+            return false;
+        }
+
+        for (auto& chunk : chunks)
+        {
+            WriteChunk(file, chunk);
+        }
+
+        file.close();
+        return true;
+    }
+
 private:
+    void WriteChunk(std::ofstream& file, LDChunk& chunk)
+    {
+        // Recalculate chunk length including children
+        chunk.length = CalculateChunkLength(chunk);
+
+        // Write first byte of chunk ID (endianness marker)
+        uint8_t firstByte = is64bit ? 0x80 : 0x00;
+        file.write(reinterpret_cast<const char*>(&firstByte), 1);
+
+        // Write the next 3 bytes of the chunk type
+        uint32_t rawType = static_cast<uint32_t>(chunk.type) & 0x00FFFFFF; // lower 3 bytes
+        if (isBigEndian)
+            rawType = Swap32(rawType) >> 8; // shift to keep only lower 3 bytes in big endian
+
+        file.write(reinterpret_cast<const char*>(&rawType), 3);
+
+        // Write version and hasChildren, the version makes no sense to me.
+        WriteUInt16(file, chunk.version, isBigEndian);
+        WriteUInt16(file, chunk.hasChildren ? 1 : 0, isBigEndian);
+
+        if (is64bit)
+        {
+            WriteUInt32(file, 0, isBigEndian); // reserved for 64-bit for some reason
+        }
+
+        // Write length
+        WriteUInt32(file, static_cast<uint32_t>(chunk.length), isBigEndian);
+
+        std::cout << "Wrote chunk with properties \n Type:" << ChunkTypeToString(chunk.type) << "\n Length:" << chunk.length << "\n------\n";
+
+        // Write child chunks recursively
+        if (chunk.hasChildren)
+        {
+            for (auto& child : chunk.children)
+            {
+                WriteChunk(file, child);
+            }
+        }
+
+        // Write chunk data
+        if (!chunk.data.empty())
+        {
+            file.write(reinterpret_cast<const char*>(chunk.data.data()), chunk.data.size());
+        }
+    }
+
+    // Recursively calculate total length of a chunk including its children
+    uint32_t CalculateChunkLength(LDChunk& chunk)
+    {
+        uint32_t totalLength = static_cast<uint32_t>(chunk.data.size());
+
+        if (chunk.hasChildren)
+        {
+            for (auto& child : chunk.children)
+            {
+                totalLength += chunkSize; // sub's header
+                totalLength += CalculateChunkLength(child); // sub's data + sub
+            }
+        }
+
+        return totalLength;
+    }
+
+    void WriteUInt16(std::ofstream& file, uint16_t val, bool bigEndian)
+    {
+        if (bigEndian) val = Swap16(val);
+        file.write(reinterpret_cast<const char*>(&val), sizeof(val));
+    }
+
+    void WriteUInt32(std::ofstream& file, uint32_t val, bool bigEndian)
+    {
+        if (bigEndian) val = Swap32(val);
+        file.write(reinterpret_cast<const char*>(&val), sizeof(val));
+    }
+
     void ReadChunks(std::ifstream& file, uint64_t startOffset, uint64_t maxOffset,
         std::vector<LDChunk>& outChunks, int depth = 0)
     {

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Panel.h"
-#include <LDChunk.h>
+#include <Loading/LDChunk.h>
 #include <imgui.h>
 
 class ChunkPanel : public Panel {

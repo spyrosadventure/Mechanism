@@ -61,4 +61,6 @@ public:
     RZResource* next;
     RezType rezType;
     std::string rezName;
+
+    void SetName(const std::string& name) { rezName = name; }
 };
