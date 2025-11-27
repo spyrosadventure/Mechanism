@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/3rd_party/imgui;$(SolutionDir)/3rd_party/glad;$(SolutionDir)/1st_party/cogwheel;$(SolutionDir)/3rd_party/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/3rd_party/imgui;$(SolutionDir)/3rd_party/glad;$(SolutionDir)/1st_party/cogwheel;$(SolutionDir)/3rd_party;$(SolutionDir)/3rd_party/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <SupportJustMyCode>false</SupportJustMyCode>
@@ -130,7 +130,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/3rd_party/imgui;$(SolutionDir)/3rd_party/glad;$(SolutionDir)/1st_party/cogwheel;$(SolutionDir)/3rd_party/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/3rd_party/imgui;$(SolutionDir)/3rd_party/glad;$(SolutionDir)/1st_party/cogwheel;$(SolutionDir)/3rd_party;$(SolutionDir)/3rd_party/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <SupportJustMyCode>false</SupportJustMyCode>
     </ClCompile>
@@ -160,6 +160,7 @@
     <ClInclude Include="ImGuiStyles.h" />
     <ClInclude Include="Panels\ChunkPanel.h" />
     <ClInclude Include="Panels\Panel.h" />
+    <ClInclude Include="Test_Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

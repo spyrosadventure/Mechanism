@@ -7,6 +7,7 @@
 #include "Panels/ChunkPanel.h"
 #include "Panels/ViewerPanel.h"
 #include "Config.h"
+#include "Test_Utils.h"
 
 // cant think of a better way to do this smh
 struct OpenedFile {
@@ -22,6 +23,8 @@ void glfw_error_callback(int error, const char* description) {
 
 const char* windowTitle = "Mechanism | Chunk Viewer for Goliath";
 std::filesystem::path configPath;
+
+PKPackageMgr curPackage;
 
 // sorry if you have to read through all of this, I really don't like how I made this, I am still learning C++ though so I'll improve this someday!
 int main() {
@@ -90,6 +93,11 @@ int main() {
             ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
 
         // Whole tab system sucks, I will be re-doing this when I start making GSX's Level System lol
+        static bool showSavePopup = false;
+        static bool isCompressed = false;
+        static bool is64Bit = false;
+        static int endianOption = 0; // 0 = Little, 1 = Big
+        const char* endianItems[] = { "Little Endian", "Big Endian" };
 
         if (ImGui::BeginTabBar("MainTabs", ImGuiTabBarFlags_FittingPolicyScroll)) {
 
@@ -150,7 +158,7 @@ int main() {
                         of.chunkPanel.chunks = package.chunks;
                         of.chunkPanel.is64Bit = package.is64bit;
                         of.chunkPanel.game = int(currentGame);
-                        package.SaveFile("test.pak");
+                        //ExportSpidermanMeshes(package);
 
                         if (!of.chunkPanel.chunks.empty()) { // this caused so many errors before i added this check!
                             of.chunkPanel.selectedChunk = &of.chunkPanel.chunks[0];
@@ -186,6 +194,46 @@ int main() {
             }
             ImGui::EndTabBar();
         }
+
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Save")) {
+                    ImGui::OpenPopup("Save File Settings"); // just open popup
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
+        ImVec2 center = viewport->GetCenter();
+        ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("Save File Settings", nullptr,
+            ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+        {
+            ImGui::Checkbox("Is Compressed", &isCompressed);
+            ImGui::Checkbox("Is 64-Bit", &is64Bit);
+            ImGui::Combo("Endianness", &endianOption, endianItems, IM_ARRAYSIZE(endianItems));
+
+            ImGui::Spacing();
+
+            if (ImGui::Button("Save", ImVec2(120, 0))) {
+                if (!openedFiles.empty()) {
+                    OpenedFile& of = openedFiles[0];
+                    PKPackageMgr package = curPackage;
+                    std::string savePath = std::string(of.path) + "/" + std::string(of.name) + ".mod";
+                    package.SaveFile(savePath, isCompressed, is64Bit, endianOption);
+                }
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
+        }
+
         ImGui::End();
 
         ImGui::Render();

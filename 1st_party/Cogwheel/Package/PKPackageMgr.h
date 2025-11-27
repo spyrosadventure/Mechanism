@@ -167,8 +167,13 @@ public:
         return true;
     }
 
-    bool SaveFile(const std::string& filename)
+    bool SaveFile(const std::string& filename, bool isCompressed, bool is64Bit, bool isBigEndian)
     {
+        if (isCompressed) {
+            std::cout << "[INFO] File is marked as compressed. Skipping build!\n";
+            return true;
+        }
+
         std::ofstream file(filename, std::ios::binary);
         if (!file.is_open()) {
             std::cerr << "Failed to open file for writing: " << filename << std::endl;
@@ -177,7 +182,7 @@ public:
 
         for (auto& chunk : chunks)
         {
-            WriteChunk(file, chunk);
+            WriteChunk(file, chunk, is64Bit, isBigEndian);
         }
 
         file.close();
@@ -185,42 +190,40 @@ public:
     }
 
 private:
-    void WriteChunk(std::ofstream& file, LDChunk& chunk)
+    void WriteChunk(std::ofstream& file, LDChunk& chunk, bool is64Bit, bool isBigEndian)
     {
         // Recalculate chunk length including children
-        chunk.length = CalculateChunkLength(chunk);
+        chunk.length = CalculateChunkLength(chunk, is64Bit);
 
         // Write first byte of chunk ID (endianness marker)
-        uint8_t firstByte = is64bit ? 0x80 : 0x00;
+        uint8_t firstByte = is64Bit ? 0x80 : 0x00;
         file.write(reinterpret_cast<const char*>(&firstByte), 1);
 
         // Write the next 3 bytes of the chunk type
         uint32_t rawType = static_cast<uint32_t>(chunk.type) & 0x00FFFFFF; // lower 3 bytes
         if (isBigEndian)
-            rawType = Swap32(rawType) >> 8; // shift to keep only lower 3 bytes in big endian
+            rawType = Swap32(rawType) >> 8; // keep only lower 3 bytes in big endian
 
         file.write(reinterpret_cast<const char*>(&rawType), 3);
 
-        // Write version and hasChildren, the version makes no sense to me.
+        // Write version and hasChildren
         WriteUInt16(file, chunk.version, isBigEndian);
         WriteUInt16(file, chunk.hasChildren ? 1 : 0, isBigEndian);
 
-        if (is64bit)
+        if (is64Bit)
         {
-            WriteUInt32(file, 0, isBigEndian); // reserved for 64-bit for some reason
+            WriteUInt32(file, 0, isBigEndian); // reserved for 64-bit
         }
 
         // Write length
         WriteUInt32(file, static_cast<uint32_t>(chunk.length), isBigEndian);
-
-        std::cout << "Wrote chunk with properties \n Type:" << ChunkTypeToString(chunk.type) << "\n Length:" << chunk.length << "\n------\n";
 
         // Write child chunks recursively
         if (chunk.hasChildren)
         {
             for (auto& child : chunk.children)
             {
-                WriteChunk(file, child);
+                WriteChunk(file, child, is64Bit, isBigEndian);
             }
         }
 
@@ -231,17 +234,18 @@ private:
         }
     }
 
-    // Recursively calculate total length of a chunk including its children
-    uint32_t CalculateChunkLength(LDChunk& chunk)
+    uint32_t CalculateChunkLength(LDChunk& chunk, bool is64Bit)
     {
         uint32_t totalLength = static_cast<uint32_t>(chunk.data.size());
 
         if (chunk.hasChildren)
         {
+            int chunkSize = is64Bit ? 16 : 12;
+
             for (auto& child : chunk.children)
             {
-                totalLength += chunkSize; // sub's header
-                totalLength += CalculateChunkLength(child); // sub's data + sub
+                totalLength += chunkSize;                // sub-header
+                totalLength += CalculateChunkLength(child, is64Bit); // sub-data
             }
         }
 
