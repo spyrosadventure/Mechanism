@@ -156,6 +156,15 @@
     <ClCompile Include="Panels\ViewerPanel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="1st_party\Cogwheel\BaseUtils\BUCRC.h" />
+    <ClInclude Include="1st_party\Cogwheel\BaseUtils\BUMath.h" />
+    <ClInclude Include="1st_party\Cogwheel\GameLogic\GLBaseAPI.h" />
+    <ClInclude Include="1st_party\Cogwheel\GameLogic\GLParamBlock.h" />
+    <ClInclude Include="1st_party\Cogwheel\GEEngineMgr.h" />
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZAnimMap.h" />
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZCutscene.h" />
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZHAnim.h" />
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZHierarchy.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ImGuiStyles.h" />
     <ClInclude Include="Panels\ChunkPanel.h" />

@@ -42,9 +42,6 @@
     <ClCompile Include="3rd_party\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="1st_party\Cogwheel\PKPackageMgr.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Panels\ViewerPanel.h">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,16 +56,40 @@
     <ClInclude Include="Panels\ChunkPanel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="1st_party\Cogwheel\LDChunk.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImGuiStyles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="1st_party\Cogwheel\RZResource.h">
+    <ClInclude Include="Test_Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZHAnim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZHierarchy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\BaseUtils\BUMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\BaseUtils\BUCRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZCutscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\GameLogic\GLParamBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\GameLogic\GLBaseAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\Resource\RZAnimMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="1st_party\Cogwheel\GEEngineMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

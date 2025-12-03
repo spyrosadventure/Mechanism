@@ -64,3 +64,7 @@ public:
 
     void SetName(const std::string& name) { rezName = name; }
 };
+
+class RZResourceDicardable : RZResource {
+    uint32_t muiPostLoadDataCRC;
+};
